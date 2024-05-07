@@ -199,3 +199,14 @@ async def test_list_users_unauthorized(async_client, user_token):
         headers={"Authorization": f"Bearer {user_token}"}
     )
     assert response.status_code == 403  # Forbidden, as expected for regular user
+
+
+@pytest.mark.asyncio
+async def test_update_user_email_duplicate_update_fail(async_client, admin_user,admin_token, unverified_user):
+    updated_data = {"email": f"updated_{admin_user.id}@example.com"}
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    response1 = await async_client.put(f"/users/{admin_user.id}", json=updated_data, headers=headers)
+    response2 = await async_client.put(f"/users/{unverified_user.id}", json=updated_data, headers=headers)
+    assert response1.status_code == 200
+    assert response2.status_code == 404
+    assert "Email address already taken" in response2.json().get("detail", "")
