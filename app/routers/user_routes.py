@@ -88,6 +88,9 @@ async def update_user(user_id: UUID, user_update: UserUpdate, request: Request, 
     """
     user_data = user_update.model_dump(exclude_unset=True)
     updated_user = await UserService.update(db, user_id, user_data)
+    if updated_user =="EMAIL_ALREADY_REGISTERED":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email address already taken")
+    
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
