@@ -210,3 +210,45 @@ async def test_update_user_email_duplicate_update_fail(async_client, admin_user,
     assert response1.status_code == 200
     assert response2.status_code == 404
     assert "Email address already taken" in response2.json().get("detail", "")
+
+
+
+
+@pytest.mark.asyncio
+
+async def test_create_user_github(async_client):
+
+    data = {"email": "jon.does@example.com",
+
+        "password": "AnotherPassword123!",
+
+        "role" : "ANONYMOUS",
+
+        "github_profile_url": "http://www.github.com/srujit12091997"}
+
+    response = await async_client.post("/register/", json=data)
+
+    assert response.status_code == 200
+
+    assert response.json()["github_profile_url"] == data["github_profile_url"]
+
+
+
+
+@pytest.mark.asyncio
+
+async def test_create_user_linkedin(async_client):
+
+    data = {"email": "jon.doe@example.com",
+
+        "password": "AnotherPassword123!",
+
+        "role" : "ANONYMOUS",
+
+        "linkedin_profile_url": "http://www.linkedin.com/in/srujitvarasala"}
+
+    response = await async_client.post("/register/", json=data)
+
+    assert response.status_code == 200
+
+    assert response.json()["linkedin_profile_url"] == data["linkedin_profile_url"]
