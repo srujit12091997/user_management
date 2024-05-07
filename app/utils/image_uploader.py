@@ -59,7 +59,7 @@ def allowed_file(file: UploadFile):
 
 def resize_image(image_path, size, user_id):
     with Image.open(image_path) as img:
-        resized_img = img.resize(size, Image.ANTIALIAS)
+        resized_img = img.resize(size, Image.Resampling.LANCZOS)
         output_path = f"/tmp/{str(user_id)}.{image_path.split('.')[-1]}"
         resized_img.save(output_path)
         return output_path
