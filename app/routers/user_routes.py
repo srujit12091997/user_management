@@ -88,6 +88,9 @@ async def update_user(user_id: UUID, user_update: UserUpdate, request: Request, 
     """
     user_data = user_update.model_dump(exclude_unset=True)
     updated_user = await UserService.update(db, user_id, user_data)
+    if updated_user =="EMAIL_ALREADY_REGISTERED":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email address already taken")
+    
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
@@ -155,6 +158,8 @@ async def create_user(user: UserCreate, request: Request, db: AsyncSession = Dep
         first_name=created_user.first_name,
         last_name=created_user.last_name,
         profile_picture_url=created_user.profile_picture_url,
+        github_profile_url=created_user.github_profile_url,
+        linkedin_profile_url=created_user.linkedin_profile_url,
         nickname=created_user.nickname,
         email=created_user.email,
         role=created_user.role,
@@ -173,23 +178,26 @@ async def list_users(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_role(["ADMIN", "MANAGER"]))
 ):
-    total_users = await UserService.count(db)
-    users = await UserService.list_users(db, skip, limit)
+    if limit>0:
+        total_users = await UserService.count(db)
+        users = await UserService.list_users(db, skip, limit)
 
-    user_responses = [
-        UserResponse.model_validate(user) for user in users
-    ]
-    
-    pagination_links = generate_pagination_links(request, skip, limit, total_users)
-    
-    # Construct the final response with pagination details
-    return UserListResponse(
-        items=user_responses,
-        total=total_users,
-        page=skip // limit + 1,
-        size=len(user_responses),
-        links=pagination_links  # Ensure you have appropriate logic to create these links
-    )
+        user_responses = [
+            UserResponse.model_validate(user) for user in users
+        ]
+
+        pagination_links = generate_pagination_links(request, skip, limit, total_users)
+
+        # Construct the final response with pagination details
+        return UserListResponse(
+            items=user_responses,
+            total=total_users,
+            page=skip // limit + 1,
+            size=len(user_responses),
+            links=pagination_links  # Ensure you have appropriate logic to create these links
+        )
+    raise HTTPException(status_code=400, detail="Limit must be greater than 0")
+
 
 
 @router.post("/register/", response_model=UserResponse, tags=["Login and Registration"])

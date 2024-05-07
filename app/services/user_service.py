@@ -71,10 +71,12 @@ class UserService:
 
             else:
                 new_user.verification_token = generate_verification_token()
-                await email_service.send_verification_email(new_user)
+
 
             session.add(new_user)
             await session.commit()
+            if new_user.role != UserRole.ADMIN:
+                await email_service.send_verification_email(new_user)          
             return new_user
         except ValidationError as e:
             logger.error(f"Validation error during user creation: {e}")
@@ -85,7 +87,12 @@ class UserService:
         try:
             # validated_data = UserUpdate(**update_data).dict(exclude_unset=True)
             validated_data = UserUpdate(**update_data).model_dump(exclude_unset=True)
-
+            if "email" in validated_data.keys():
+                existing_user = await cls.get_by_email(session, validated_data['email'])
+                if existing_user and existing_user.id!=user_id:
+                    logger.error("User with given email already exists.")
+                    return "EMAIL_ALREADY_REGISTERED"
+                
             if 'password' in validated_data:
                 validated_data['hashed_password'] = hash_password(validated_data.pop('password'))
             query = update(User).where(User.id == user_id).values(**validated_data).execution_options(synchronize_session="fetch")

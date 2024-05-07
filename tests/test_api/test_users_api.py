@@ -184,9 +184,71 @@ async def test_list_users_as_manager(async_client, manager_token):
     assert response.status_code == 200
 
 @pytest.mark.asyncio
+async def test_list_users_0_pagination(async_client, admin_token):
+    response = await async_client.get(
+        "/users/?limit=0&skip=0",
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert response.status_code == 400
+    assert "Limit must be greater than 0" in response.json().get("detail", "")
+    
+@pytest.mark.asyncio
 async def test_list_users_unauthorized(async_client, user_token):
     response = await async_client.get(
         "/users/",
         headers={"Authorization": f"Bearer {user_token}"}
     )
     assert response.status_code == 403  # Forbidden, as expected for regular user
+
+
+@pytest.mark.asyncio
+async def test_update_user_email_duplicate_update_fail(async_client, admin_user,admin_token, unverified_user):
+    updated_data = {"email": f"updated_{admin_user.id}@example.com"}
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    response1 = await async_client.put(f"/users/{admin_user.id}", json=updated_data, headers=headers)
+    response2 = await async_client.put(f"/users/{unverified_user.id}", json=updated_data, headers=headers)
+    assert response1.status_code == 200
+    assert response2.status_code == 404
+    assert "Email address already taken" in response2.json().get("detail", "")
+
+
+
+
+@pytest.mark.asyncio
+
+async def test_create_user_github(async_client):
+
+    data = {"email": "jon.does@example.com",
+
+        "password": "AnotherPassword123!",
+
+        "role" : "ANONYMOUS",
+
+        "github_profile_url": "http://www.github.com/srujit12091997"}
+
+    response = await async_client.post("/register/", json=data)
+
+    assert response.status_code == 200
+
+    assert response.json()["github_profile_url"] == data["github_profile_url"]
+
+
+
+
+@pytest.mark.asyncio
+
+async def test_create_user_linkedin(async_client):
+
+    data = {"email": "jon.doe@example.com",
+
+        "password": "AnotherPassword123!",
+
+        "role" : "ANONYMOUS",
+
+        "linkedin_profile_url": "http://www.linkedin.com/in/srujitvarasala"}
+
+    response = await async_client.post("/register/", json=data)
+
+    assert response.status_code == 200
+
+    assert response.json()["linkedin_profile_url"] == data["linkedin_profile_url"]

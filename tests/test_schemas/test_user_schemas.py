@@ -117,11 +117,12 @@ def test_valid_password_for_user_creation(password, user_create_data):
 
 @pytest.mark.parametrize("password", [
     "password",
-    "1234567",
+    "12345678",
     "lowercaseall",
     "UPPERCASEALL",
     "12345678",
     "abcdefgh",
+    "sanju123",
     "simple",
     "noSpecials1",
     "short1!",
