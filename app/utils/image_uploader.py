@@ -20,6 +20,7 @@ minio_client = Minio(
     secure=False  # Set to True if you enable SSL/TLS
 )
 
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB limit
 
@@ -46,6 +47,7 @@ async def upload(file: UploadFile, user_id: UUID) -> str:
         # Clean up temporary files
         os.remove(file_path)
         os.remove(resized_image_path)
+
 
         # Return the URL to access the file
         return f"http://{settings.MINIO_ENDPOINT}/{settings.MINIO_BUCKET_NAME}/{image_name}"
