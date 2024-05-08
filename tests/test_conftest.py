@@ -69,6 +69,7 @@ async def test_user_unlock(db_session, locked_user):
     updated_user = result.scalars().first()
     assert not updated_user.is_locked
 
+
 @pytest.mark.asyncio
 async def test_update_professional_status(db_session, verified_user):
     verified_user.update_professional_status(True)

@@ -174,6 +174,7 @@ class UserService:
                 await session.commit()
         return None
 
+
     @classmethod
     async def is_account_locked(cls, session: AsyncSession, email: str) -> bool:
         user = await cls.get_by_email(session, email)

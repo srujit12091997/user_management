@@ -129,6 +129,7 @@ def test_valid_password_for_user_creation(password, user_create_data):
     "1234"
 ]
 )
+
 def test_invalid_password_for_user_creation(password, user_base_data):
     user_base_data["password"] = password
     with pytest.raises(ValidationError):
