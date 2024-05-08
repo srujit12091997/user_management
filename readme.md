@@ -24,13 +24,13 @@ Below is the list of 5 QA issues that were fixed:
 
 | Issues    | 
 | -------- | 
-| https://github.com/tabrezdn1/is601-final/issues/1 | 
-| https://github.com/tabrezdn1/is601-final/issues/2 |
-| https://github.com/tabrezdn1/is601-final/issues/5 |
-| https://github.com/tabrezdn1/is601-final/issues/7 |
-| https://github.com/tabrezdn1/is601-final/issues/13 |
+| https://github.com/srujit12091997/user_management/issues/8 | 
+| https://github.com/srujit12091997/user_management/issues/9 |
+| https://github.com/srujit12091997/user_management/issues/10 |
+| https://github.com/srujit12091997/user_management/issues/11 |
+| https://github.com/srujit12091997/user_management/issues/12 |
 
-Find all the closed issues: https://github.com/tabrezdn1/is601-final/issues?q=is%3Aissue+is%3Aclosed
+Find all the closed issues: https://github.com/srujit12091997/user_management/issues?q=is%3Aissue+is%3Aclosed
 
 Find all the closed and merged Pull requests: https://github.com/srujit12091997/user_management/pulls?q=is%3Apr+is%3Aclosed
 
